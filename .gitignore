@@ -207,3 +207,14 @@ marimo/_lsp/
 __marimo__/
 
 .mcp.json
+
+# Node / Next.js (never commit dependencies)
+node_modules/
+frontend/.next/
+frontend/out/
+.next/
+out/
+frontend/test-results/
+
+# Local editor / agent config
+.claude/
