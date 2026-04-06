@@ -2,16 +2,20 @@
 
 import { useEffect, useState } from 'react';
 
+import { DEFAULT_ITEM_IMAGE_URL } from '@/lib/default-item-image';
+
 type Props = {
   title: string;
   images: string[];
 };
 
 export default function ItemImageGallery({ title, images }: Props) {
-  const [selectedImage, setSelectedImage] = useState(images[0] ?? '');
+  const displayImages = images.length > 0 ? images : [DEFAULT_ITEM_IMAGE_URL];
+  const [selectedImage, setSelectedImage] = useState(displayImages[0] ?? DEFAULT_ITEM_IMAGE_URL);
 
   useEffect(() => {
-    setSelectedImage(images[0] ?? '');
+    const next = images.length > 0 ? images : [DEFAULT_ITEM_IMAGE_URL];
+    setSelectedImage(next[0] ?? DEFAULT_ITEM_IMAGE_URL);
   }, [images]);
 
   if (!selectedImage) {
@@ -25,9 +29,9 @@ export default function ItemImageGallery({ title, images }: Props) {
         style={{ backgroundImage: `url(${selectedImage})` }}
         aria-label={title}
       />
-      {images.length > 1 ? (
+      {displayImages.length > 1 ? (
         <div className="detail-thumb-row">
-          {images.map((image, index) => (
+          {displayImages.map((image, index) => (
             <button
               key={`${image}-${index}`}
               type="button"

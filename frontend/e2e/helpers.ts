@@ -1,47 +1,52 @@
 import { expect, type Page } from '@playwright/test';
 
 type SignupOptions = {
+  username?: string;
   email?: string;
   nickname?: string;
+  fullName?: string;
   password?: string;
 };
 
 export async function signupViaUi(page: Page, options: SignupOptions = {}) {
   const stamp = Date.now();
+  const username = options.username ?? `pwuser${stamp.toString().slice(-8)}`;
   const email = options.email ?? `playwright_${stamp}@example.com`;
   const nickname = options.nickname ?? `pw${stamp.toString().slice(-8)}`;
+  const fullName = options.fullName ?? '플레이wright';
   const password = options.password ?? 'password123';
 
   await page.goto('/signup');
+  await page.getByLabel('아이디').fill(username);
+  await page.getByLabel('비밀번호', { exact: true }).fill(password);
+  await page.getByLabel('비밀번호 확인').fill(password);
   await page.getByLabel('이메일').fill(email);
   await page.getByLabel('닉네임').fill(nickname);
 
-  const regionSelect = page.getByLabel('대표 동네');
-  await expect(regionSelect).toBeVisible();
-  const opts = await regionSelect.locator('option').evaluateAll((elements) =>
-    elements.map((element) => ({
-      value: (element as HTMLOptionElement).value,
-      text: element.textContent ?? '',
-    })),
-  );
-  const regionOption = opts.find((o) => o.value);
-  if (!regionOption) {
-    throw new Error('대표 동네 옵션이 없습니다.');
-  }
-  await regionSelect.selectOption(regionOption.value);
+  const citySelect = page.getByLabel('시·도');
+  await expect(citySelect).toBeVisible();
+  await citySelect.selectOption({ label: '서울' });
 
-  await page.getByLabel('비밀번호').fill(password);
+  const districtSelect = page.getByLabel('구');
+  await expect(districtSelect).toBeEnabled();
+  await districtSelect.selectOption({ label: '강남구' });
+
+  const dongSelect = page.getByLabel('읍·면·동');
+  await expect(dongSelect).toBeEnabled();
+  await dongSelect.selectOption({ label: '역삼동' });
+
+  await page.getByLabel('이름').fill(fullName);
   await page.getByRole('button', { name: '회원가입' }).click();
 
   await page.waitForURL('**/');
   await expect(page.getByText(`${nickname}님`)).toBeVisible();
 
-  return { email, nickname, password };
+  return { username, email, nickname, fullName, password };
 }
 
-export async function loginViaUi(page: Page, email: string, password: string) {
+export async function loginViaUi(page: Page, username: string, password: string) {
   await page.goto('/login');
-  await page.getByLabel('이메일').fill(email);
+  await page.getByLabel('아이디').fill(username);
   await page.getByLabel('비밀번호').fill(password);
   await page.getByRole('button', { name: '로그인' }).click();
   await page.waitForURL('**/');

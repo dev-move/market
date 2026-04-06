@@ -10,7 +10,7 @@ import { saveAuthSession } from '@/lib/auth';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -21,12 +21,12 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const session = await login({ email, password });
+      const session = await login({ username: username.trim().toLowerCase(), password });
       saveAuthSession(session);
       router.push('/');
       router.refresh();
     } catch {
-      setError('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
+      setError('로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.');
     } finally {
       setLoading(false);
     }
@@ -37,19 +37,19 @@ export default function LoginPage() {
       <div className="panel" style={{ maxWidth: 480, margin: '0 auto' }}>
         <h1>로그인</h1>
         <p className="muted" style={{ marginTop: 8, marginBottom: 24 }}>
-          이메일과 비밀번호로 로그인합니다.
+          아이디와 비밀번호로 로그인합니다.
         </p>
 
         <form className="form" onSubmit={handleSubmit}>
           <div className="field">
-            <label htmlFor="email">이메일</label>
+            <label htmlFor="username">아이디</label>
             <input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
+              id="username"
+              name="username"
+              autoComplete="username"
+              placeholder="아이디 입력"
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
             />
           </div>
 
@@ -59,6 +59,7 @@ export default function LoginPage() {
               id="password"
               name="password"
               type="password"
+              autoComplete="current-password"
               placeholder="비밀번호 입력"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
@@ -76,7 +77,13 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="muted" style={{ marginTop: 20 }}>
+        <p className="muted" style={{ marginTop: 16 }}>
+          <Link href="/recover/username">아이디 찾기</Link>
+          {' · '}
+          <Link href="/recover/password">비밀번호 찾기</Link>
+        </p>
+
+        <p className="muted" style={{ marginTop: 12 }}>
           아직 회원이 아니라면 <Link href="/signup">회원가입</Link>
         </p>
       </div>

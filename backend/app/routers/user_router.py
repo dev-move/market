@@ -10,7 +10,12 @@ from app.schemas.chat import ChatMessageResponse, ChatRoomResponse
 from app.schemas.item import ItemResponse
 from app.schemas.report import MyReportResponse
 from app.schemas.review import MyReviewResponse
-from app.schemas.user import UserLogin, UserSignup
+from app.schemas.user import (
+    UserLogin,
+    UserRecoverPassword,
+    UserRecoverUsername,
+    UserSignup,
+)
 from app.services.auth_service import AuthService
 from app.services.item_service import ItemService
 
@@ -22,9 +27,11 @@ def signup(body: UserSignup, db: Session = Depends(get_db)):
     try:
         user = AuthService.register(
             db,
-            email=body.email,
+            username=body.username.strip().lower(),
+            email=str(body.email),
             password=body.password,
             nickname=body.nickname,
+            full_name=body.full_name,
             region_id=body.region_id,
         )
     except ValueError as exc:
@@ -34,8 +41,10 @@ def signup(body: UserSignup, db: Session = Depends(get_db)):
 
     return {
         "id": user.id,
+        "username": user.username,
         "email": user.email,
         "nickname": user.nickname,
+        "full_name": user.full_name,
         "region_id": user.region_id,
         "created_at": user.created_at,
     }
@@ -44,12 +53,40 @@ def signup(body: UserSignup, db: Session = Depends(get_db)):
 @router.post("/login")
 def login(body: UserLogin, db: Session = Depends(get_db)):
     try:
-        return AuthService.login(db, body.email, body.password)
+        return AuthService.login(db, body.username, body.password)
     except ValueError as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=str(exc),
         )
+
+
+@router.post("/recover/username")
+def recover_username(body: UserRecoverUsername, db: Session = Depends(get_db)):
+    username = AuthService.find_username(db, str(body.email), body.full_name)
+    if not username:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="일치하는 회원 정보를 찾을 수 없습니다",
+        )
+    return {"username": username}
+
+
+@router.post("/recover/password")
+def recover_password(body: UserRecoverPassword, db: Session = Depends(get_db)):
+    ok = AuthService.reset_password_if_verified(
+        db,
+        username=body.username,
+        full_name=body.full_name,
+        email=str(body.email),
+        new_password=body.new_password,
+    )
+    if not ok:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="일치하는 회원 정보를 찾을 수 없습니다",
+        )
+    return {"ok": True}
 
 
 @router.get("/me/favorites", response_model=list[ItemResponse])
