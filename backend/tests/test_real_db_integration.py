@@ -95,14 +95,25 @@ def integration_context():
         _cleanup_test_rows(prefix)
 
 
-def _signup_and_login(client: TestClient, *, email: str, nickname: str, region_id: int) -> str:
+def _signup_and_login(
+    client: TestClient,
+    *,
+    username: str,
+    email: str,
+    nickname: str,
+    full_name: str,
+    region_id: int,
+) -> str:
     password = "password123"
     signup_response = client.post(
         "/api/v1/users/signup",
         json={
-            "email": email,
+            "username": username,
             "password": password,
+            "password_confirm": password,
+            "email": email,
             "nickname": nickname,
+            "full_name": full_name,
             "region_id": region_id,
         },
     )
@@ -110,7 +121,7 @@ def _signup_and_login(client: TestClient, *, email: str, nickname: str, region_i
 
     login_response = client.post(
         "/api/v1/users/login",
-        json={"email": email, "password": password},
+        json={"username": username, "password": password},
     )
     assert login_response.status_code == 200, login_response.text
     return str(login_response.json()["access_token"])
@@ -137,16 +148,21 @@ def test_real_db_user_item_chat_review_report_flow(integration_context):
     region_id = integration_context["region_id"]
     category_id = integration_context["category_id"]
 
+    slug = prefix.replace("_", "")[-12:]
     seller_token = _signup_and_login(
         client,
+        username=f"sell{slug}",
         email=f"{prefix}_seller@example.com",
         nickname=f"{prefix[:12]}seller",
+        full_name="판매자",
         region_id=region_id,
     )
     buyer_token = _signup_and_login(
         client,
+        username=f"buy{slug}",
         email=f"{prefix}_buyer@example.com",
         nickname=f"{prefix[:12]}buyer",
+        full_name="구매자",
         region_id=region_id,
     )
 

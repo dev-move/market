@@ -51,8 +51,8 @@ export default function SiteHeader() {
   return (
     <header className="site-header">
       <div className="container header-inner">
-        <Link href="/" className="brand">
-          Market
+        <Link href="/" className="brand brand-logo">
+          <img src="/market-logo.png" alt="동네마켓" className="brand-logo-img" />
         </Link>
         <nav className="nav">
           {publicLinks.map((link) => (

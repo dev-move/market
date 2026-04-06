@@ -38,7 +38,7 @@ test('non-owner can report an item', async ({ page }) => {
     if (seller && title) {
       await page.goto('/');
       await logoutViaStorage(page);
-      await loginViaUi(page, seller.email, seller.password);
+      await loginViaUi(page, seller.username, seller.password);
       await deleteOwnedItemByTitle(page, title);
     }
   }
@@ -69,7 +69,7 @@ test('buyer can leave review on sold item', async ({ page }) => {
     await page.waitForURL(/\/chat\/\d+/);
 
     await logoutViaStorage(page);
-    await loginViaUi(page, seller.email, seller.password);
+    await loginViaUi(page, seller.username, seller.password);
 
     await page.goto(itemUrl);
     await page.getByRole('link', { name: '상품 수정' }).click();
@@ -79,7 +79,7 @@ test('buyer can leave review on sold item', async ({ page }) => {
     await page.waitForURL(/\/items\/\d+/);
 
     await logoutViaStorage(page);
-    await loginViaUi(page, buyer.email, buyer.password);
+    await loginViaUi(page, buyer.username, buyer.password);
 
     await page.goto(itemUrl);
     await expect(page.getByRole('heading', { name: '거래 후기' })).toBeVisible();
@@ -93,7 +93,7 @@ test('buyer can leave review on sold item', async ({ page }) => {
     if (seller && title) {
       await page.goto('/');
       await logoutViaStorage(page);
-      await loginViaUi(page, seller.email, seller.password);
+      await loginViaUi(page, seller.username, seller.password);
       await deleteOwnedItemByTitle(page, title);
     }
   }

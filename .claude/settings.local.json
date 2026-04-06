@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "mcp__notion__API-post-search"
+      "mcp__notion__API-post-search",
+      "mcp__github__search_repositories",
+      "mcp__mysql__query",
+      "mcp__notion__API-post-page"
     ]
   }
 }

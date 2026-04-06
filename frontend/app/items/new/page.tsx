@@ -203,7 +203,7 @@ export default function NewItemPage() {
             <p className="muted">
               {selectedImages.length > 0
                 ? `${selectedImages.length}개의 이미지를 업로드합니다.`
-                : '이미지를 선택하지 않으면 기본 썸네일로 표시됩니다.'}
+                : '이미지를 올리지 않으면 Market 로고가 기본 썸네일로 표시됩니다.'}
             </p>
           </div>
 
