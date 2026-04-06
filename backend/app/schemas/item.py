@@ -16,6 +16,7 @@ class ItemAuthorResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    username: str
     email: str
     nickname: str
     region_id: int | None = None

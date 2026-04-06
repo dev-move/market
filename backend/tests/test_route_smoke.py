@@ -33,14 +33,16 @@ def test_login_route_smoke(monkeypatch):
         monkeypatch.setattr(
             AuthService,
             "login",
-            lambda db, email, password: {
+            lambda db, username, password: {
                 "access_token": "access-token",
                 "refresh_token": "refresh-token",
                 "token_type": "bearer",
                 "user": {
                     "id": 2,
-                    "email": email,
+                    "username": username,
+                    "email": "buyer@example.com",
                     "nickname": "buyer",
+                    "full_name": "구매자",
                     "region_id": 7,
                 },
             },
@@ -48,7 +50,7 @@ def test_login_route_smoke(monkeypatch):
 
         response = client.post(
             "/api/v1/users/login",
-            json={"email": "buyer@example.com", "password": "plain-password"},
+            json={"username": "buyer1", "password": "plain-password"},
         )
     finally:
         _clear_overrides()

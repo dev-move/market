@@ -16,11 +16,11 @@ test('user can sign up and access authenticated pages', async ({ page }) => {
   await expect(page.getByText(`${nickname}님`)).toBeVisible();
 });
 
-test('user can login with email and password', async ({ page }) => {
-  const { email, password } = await signupViaUi(page);
+test('user can login with username and password', async ({ page }) => {
+  const { username, password } = await signupViaUi(page);
   await page.evaluate(() => localStorage.removeItem('market_auth_session'));
   await page.reload();
 
-  await loginViaUi(page, email, password);
+  await loginViaUi(page, username, password);
   await expect(page.getByRole('button', { name: '로그아웃' })).toBeVisible();
 });

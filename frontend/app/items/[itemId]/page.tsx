@@ -4,6 +4,7 @@ import ItemDetailActions from '@/components/item-detail-actions';
 import ItemFeedbackPanel from '@/components/item-feedback-panel';
 import ItemImageGallery from '@/components/item-image-gallery';
 import NoticeMessage from '@/components/notice-message';
+import { DEFAULT_ITEM_IMAGE_URL } from '@/lib/default-item-image';
 import { fetchProduct } from '@/lib/api';
 import { getStatusLabel } from '@/lib/status';
 
@@ -37,8 +38,9 @@ export default async function ItemDetailPage({ params }: Props) {
     notFound();
   }
 
+  const fromEntries = product.imageEntries?.map((image) => image.imageUrl).filter(Boolean) ?? [];
   const detailImages =
-    product.imageEntries?.map((image) => image.imageUrl).filter(Boolean) ?? [product.imageUrl];
+    fromEntries.length > 0 ? fromEntries : [product.imageUrl || DEFAULT_ITEM_IMAGE_URL];
 
   return (
     <div className="container section">

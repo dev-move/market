@@ -60,6 +60,20 @@ select {
   font-weight: 800;
 }
 
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+}
+
+/* 헤더 줄 높이(72px)는 그대로 — 로고만 그 안에서 최대한 크게 */
+.brand-logo-img {
+  height: 68px;
+  width: auto;
+  max-width: min(420px, 78vw);
+  object-fit: contain;
+}
+
 .nav {
   display: flex;
   flex-wrap: wrap;
@@ -183,8 +197,10 @@ select {
   gap: 16px;
 }
 
+/* 한 줄 4칸 고정: 상품이 1~3개여도 4열 레이아웃 유지(빈 칸은 비움), 카드는 열 너비에 맞춤 */
 .product-grid {
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
 }
 
 .card {
@@ -414,6 +430,25 @@ select {
 .field {
   display: grid;
   gap: 8px;
+}
+
+.field-label-text {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--foreground, #111827);
+}
+
+.region-cascade {
+  display: grid;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.field-error-text {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: #b91c1c;
 }
 
 .field input,
